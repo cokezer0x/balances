@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npx",
+            "env": {
+            },
+            "args": [
+                "ts-node",
+                "${file}",
+                "swaps",
+                "swaps.json"
+
+            ],
+            "name": "Launch Current TypeScript File",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
