@@ -1,0 +1,11 @@
+.idea/
+node_modules/
+build/
+tmp/
+temp/
+wallet/
+.env
+*.csv
+*api*key*
+package-lock.json
+*.log

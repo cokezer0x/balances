@@ -4,6 +4,7 @@ import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes"
 import * as fs from "fs"
 import csv from "csv-parser"
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token"
+import * as path from "path"
 
 dotenv.config()
 
@@ -217,7 +218,12 @@ async function readWalletsInformation(reader: Reader) {
   return walletsBase58
 }
 
-async function init() {
+async function init(outputFilePath: string) {
+  // Check if the file already exists
+  if (fs.existsSync(outputFilePath)) {
+    console.error(`Error: File '${outputFilePath}' already exists. Exiting.`)
+    process.exit(1)
+  }
 
   const reader = new FileReader()
   const solanaService = new SolanaService()
@@ -245,10 +251,17 @@ async function init() {
 
   const walletBalancesUSD = await convertWalletBalancesToUSD(tokens, walletBalances)
   const sortedWalletBalances = walletBalancesUSD.sort((a, b) => b.usdTotal - a.usdTotal) 
-  console.log('**************************')
-  console.log('* SORTED WALLET BALANCES *')
-  console.log('**************************')
-  console.dir(sortedWalletBalances, { depth: null })
+
+  // Save sorted balances to the specified file
+  fs.writeFileSync(outputFilePath, JSON.stringify(sortedWalletBalances, null, 2))
+  console.log(`Sorted wallet balances saved to: ${outputFilePath}`)
 }
 
-init()
+// Check if a file path argument is provided
+if (process.argv.length < 3) {
+  console.error("Error: Please provide an output file path as an argument.")
+  process.exit(1)
+}
+
+const outputFilePath = path.resolve(process.argv[2])
+init(outputFilePath)
